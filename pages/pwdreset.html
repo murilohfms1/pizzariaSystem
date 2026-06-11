@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recuperar Senha - Pizza Express</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+body{
+    background:#f4f1f1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.container{
+    width:100%;
+    max-width:450px;
+    background:#fff;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.1);
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.logo h1{
+    color:#e71d24;
+    margin-top:10px;
+}
+
+.logo p{
+    color:#666;
+    margin-top:8px;
+    line-height:1.5;
+}
+
+.form-group{
+    margin-top:20px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:12px;
+    font-size:16px;
+}
+
+input:focus{
+    outline:none;
+    border-color:#e71d24;
+}
+
+button{
+    width:100%;
+    margin-top:20px;
+    padding:15px;
+    border:none;
+    border-radius:30px;
+    background:#e71d24;
+    color:#fff;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#c9151b;
+}
+
+.info{
+    text-align:center;
+    color:#666;
+    margin-top:15px;
+}
+
+.warning-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.5);
+    justify-content:center;
+    align-items:center;
+}
+
+.warning-content{
+    background:#fff;
+    padding:25px;
+    width:90%;
+    max-width:400px;
+    border-radius:15px;
+    text-align:center;
+}
+
+.warning-content h3{
+    color:#e71d24;
+    margin-bottom:10px;
+}
+
+.warning-content button{
+    margin-top:15px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">
+        <div style="font-size:45px;">🔒</div>
+        <h1>Recuperar Senha</h1>
+        <p>
+            Informe seu e-mail para receber
+            as instruções de redefinição.
+        </p>
+    </div>
+
+    <form>
+        <div class="form-group">
+            <label>E-mail</label>
+            <input type="email" placeholder="Digite seu e-mail">
+        </div>
+
+        <button type="submit">
+            Enviar Código
+        </button>
+
+        <div class="info">
+            Um código será enviado para seu e-mail.
+        </div>
+    </form>
+</div>
+
+<div class="warning-modal" id="warningModal">
+    <div class="warning-content">
+        <h3>⚠ Atenção</h3>
+
+        <p>
+            Você tentou voltar para uma etapa anterior.
+            Por motivos de segurança, o processo de recuperação
+            será reiniciado.
+        </p>
+
+        <button onclick="reiniciarProcesso()">
+            Reiniciar Processo
+        </button>
+    </div>
+</div>
+
+<script>
+
+// adiciona uma entrada fictícia no histórico
+history.pushState(null, null, location.href);
+
+window.addEventListener('popstate', function () {
+
+    document.getElementById('warningModal').style.display = 'flex';
+
+    // impede navegação para trás
+    history.pushState(null, null, location.href);
+});
+
+function reiniciarProcesso(){
+
+    // limpar dados temporários do fluxo
+    sessionStorage.clear();
+
+    // redireciona para início da recuperação
+    window.location.href = '/pwdreset';
+}
+
+</script>
+
+</body>
+</html>
