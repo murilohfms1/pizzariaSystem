@@ -13,13 +13,6 @@ O **Pizza Express** é uma aplicação web full stack de delivery de pizzas que 
 
 ---
 
-## 🚀 Demonstração
-
-📸 *(adicione screenshots do sistema)*  
-🎥 *(opcional: GIF do fluxo do carrinho)*  
-
----
-
 ## 🧠 Arquitetura
 
 ```text
