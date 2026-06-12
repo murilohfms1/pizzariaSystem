@@ -424,8 +424,7 @@
         CONTADOR DO CARRINHO
         ========================= */
         function atualizarContadorCarrinho() {
-
-            const carrinho = getCarrinho();
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
 
             const total = carrinho.reduce(
                 (soma, item) => soma + item.quantidade,
@@ -438,6 +437,11 @@
                 badge.textContent = total;
             }
         }
+
+        window.addEventListener('pageshow', () => {
+            atualizarContadorCarrinho();
+        });
+        
     </script>
 </body>
 </html>

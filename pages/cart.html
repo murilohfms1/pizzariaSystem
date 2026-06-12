@@ -258,12 +258,14 @@
         CANCELAR PEDIDO
         ========================= */
         function cancelOrder() {
-
             if (!confirm('Deseja cancelar o pedido?')) return;
 
             localStorage.removeItem('carrinho');
 
-            carregarCarrinho();
+            // força sincronização entre páginas
+            window.dispatchEvent(new Event('storage'));
+
+            alert('Pedido cancelado!');
         }
 
         function closeCart() {
