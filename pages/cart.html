@@ -33,33 +33,9 @@
                 </button>
             </div>
         </div>
-
-        <!-- Cart Item Template (hidden) -->
-        <template id="cartItemTemplate">
-            <div class="cart-item">
-                <div class="item-info">
-                    <h3 class="item-name">Pizza Margherita</h3>
-                    <p class="item-details">Grande • Borda Fina</p>
-                </div>
-                <div class="item-controls">
-                    <div class="quantity-control">
-                        <button class="qty-btn" onclick="decreaseQty(this)">-</button>
-                        <span class="quantity">1</span>
-                        <button class="qty-btn" onclick="increaseQty(this)">+</button>
-                    </div>
-                    <span class="item-price">R$ 35,90</span>
-                    <button class="remove-btn" onclick="removeItem(this)">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </template>
-
         <!-- Add More Button -->
         <div class="add-more-section">
-            <button class="add-more-btn" onclick="addNewItem()">
+            <button class="add-more-btn" onclick="window.location.href='menu'">
                 <span class="plus-circle">+</span>
                 Adicionar mais itens
             </button>
@@ -93,117 +69,212 @@
     </div>
 
     <script>
-        function addNewItem() {
-            const emptyCart = document.querySelector('.empty-cart');
-            if (emptyCart) {
-                emptyCart.remove();
-            }
-            
-            const template = document.getElementById('cartItemTemplate');
-            const clone = template.content.cloneNode(true);
-            document.getElementById('cartItems').appendChild(clone);
-            
-            updateCartBadge();
-            updateTotal();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarCarrinho();
+            atualizarBadge();
+        });
+
+        function getCarrinho() {
+            return JSON.parse(localStorage.getItem('carrinho')) || [];
         }
 
-        function removeItem(btn) {
-            btn.closest('.cart-item').remove();
-            
-            const items = document.querySelectorAll('.cart-item');
-            if (items.length === 0) {
-                document.getElementById('cartItems').innerHTML = `
+        function salvarCarrinho(carrinho) {
+            localStorage.setItem('carrinho', JSON.stringify(carrinho));
+        }
+
+        /* =========================
+        CARREGAR CARRINHO
+        ========================= */
+        function carregarCarrinho() {
+
+            const carrinho = getCarrinho();
+            const container = document.getElementById('cartItems');
+
+            container.innerHTML = '';
+
+            if (carrinho.length === 0) {
+                container.innerHTML = `
                     <div class="empty-cart">
-                        <p>Your cart is empty</p>
-                        <button class="add-item-btn" onclick="addNewItem()">
-                            <span class="plus-icon">+</span>
-                            Add Item
-                        </button>
+                        <p>Seu carrinho está vazio</p>
                     </div>
                 `;
-            }
-            
-            updateCartBadge();
-            updateTotal();
-        }
 
-        function increaseQty(btn) {
-            const qtySpan = btn.previousElementSibling;
-            let qty = parseInt(qtySpan.textContent);
-            qtySpan.textContent = qty + 1;
-            updateCartBadge();
-            updateTotal();
-        }
-
-        function decreaseQty(btn) {
-            const qtySpan = btn.nextElementSibling;
-            let qty = parseInt(qtySpan.textContent);
-            if (qty > 1) {
-                qtySpan.textContent = qty - 1;
-                updateCartBadge();
-                updateTotal();
-            }
-        }
-
-        function updateCartBadge() {
-            const items = document.querySelectorAll('.cart-item');
-            let totalQty = 0;
-            items.forEach(item => {
-                const qty = parseInt(item.querySelector('.quantity').textContent);
-                totalQty += qty;
-            });
-            document.querySelector('.cart-badge').textContent = totalQty;
-        }
-
-        function updateTotal() {
-            const items = document.querySelectorAll('.cart-item');
-            let subtotal = 0;
-            
-            items.forEach(item => {
-                const qty = parseInt(item.querySelector('.quantity').textContent);
-                const priceText = item.querySelector('.item-price').textContent;
-                const price = parseFloat(priceText.replace('R$ ', '').replace(',', '.'));
-                subtotal += qty * price;
-            });
-            
-            const deliveryFee = items.length > 0 ? 5.00 : 0;
-            const total = subtotal + deliveryFee;
-            
-            document.getElementById('subtotal').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-            document.getElementById('deliveryFee').textContent = `R$ ${deliveryFee.toFixed(2).replace('.', ',')}`;
-            document.getElementById('total').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-        }
-
-        function doOrder() {
-            const items = document.querySelectorAll('.cart-item');
-            if (items.length === 0) {
-                alert('Your cart is empty! Add items before placing an order.');
+                atualizarResumo();
+                atualizarBadge();
                 return;
             }
-            alert('Order placed successfully! 🍕');
-            // Add your order logic here
-        }
 
-        function cancelOrder() {
-            if (confirm('Are you sure you want to cancel your order?')) {
-                document.getElementById('cartItems').innerHTML = `
-                    <div class="empty-cart">
-                        <p>Your cart is empty</p>
-                        <button class="add-item-btn" onclick="addNewItem()">
-                            <span class="plus-icon">+</span>
-                            Add Item
-                        </button>
+            carrinho.forEach(item => {
+
+                container.innerHTML += `
+                    <div class="cart-item" data-id="${item.id}">
+
+                        <div class="item-info">
+                            <h3 class="item-name">${item.nome}</h3>
+                        </div>
+
+                        <div class="item-controls">
+
+                            <div class="quantity-control">
+                                <button onclick="diminuir(${item.id})">-</button>
+                                <span>${item.quantidade}</span>
+                                <button onclick="aumentar(${item.id})">+</button>
+                            </div>
+
+                            <span class="item-price">
+                                R$ ${(item.preco * item.quantidade).toFixed(2).replace('.', ',')}
+                            </span>
+
+                            <button onclick="remover(${item.id})">🗑️</button>
+
+                        </div>
+
                     </div>
                 `;
-                updateCartBadge();
-                updateTotal();
+            });
+
+            atualizarResumo();
+            atualizarBadge();
+        }
+
+        /* =========================
+        AUMENTAR QTD
+        ========================= */
+        function aumentar(id) {
+
+            let carrinho = getCarrinho();
+
+            const item = carrinho.find(p => Number(p.id) === Number(id));
+
+            if (item) {
+                item.quantidade++;
             }
+
+            salvarCarrinho(carrinho);
+            carregarCarrinho();
+        }
+
+        /* =========================
+        DIMINUIR QTD
+        ========================= */
+        function diminuir(id) {
+
+            let carrinho = getCarrinho();
+
+            const item = carrinho.find(p => Number(p.id) === Number(id));
+
+            if (!item) return;
+
+            item.quantidade--;
+
+            if (item.quantidade <= 0) {
+                carrinho = carrinho.filter(p => Number(p.id) !== Number(id));
+            }
+
+            salvarCarrinho(carrinho);
+            carregarCarrinho();
+        }
+
+        /* =========================
+        REMOVER ITEM
+        ========================= */
+        function remover(id) {
+
+            let carrinho = getCarrinho();
+
+            carrinho = carrinho.filter(p => Number(p.id) !== Number(id));
+
+            salvarCarrinho(carrinho);
+            carregarCarrinho();
+        }
+
+        /* =========================
+        BADGE (contador)
+        ========================= */
+        function atualizarBadge() {
+
+            const carrinho = getCarrinho();
+
+            const total = carrinho.reduce(
+                (soma, item) => soma + item.quantidade,
+                0
+            );
+
+            const badge = document.querySelector('.cart-badge');
+
+            if (badge) {
+                badge.textContent = total;
+            }
+        }
+
+        /* =========================
+        RESUMO (subtotal/taxa/total)
+        ========================= */
+        function atualizarResumo() {
+
+            const carrinho = getCarrinho();
+
+            let subtotal = 0;
+
+            carrinho.forEach(item => {
+                subtotal += item.preco * item.quantidade;
+            });
+
+            const taxa = carrinho.length > 0 ? 5 : 0;
+
+            const total = subtotal + taxa;
+
+            document.getElementById('subtotal').textContent =
+                `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+
+            document.getElementById('deliveryFee').textContent =
+                `R$ ${taxa.toFixed(2).replace('.', ',')}`;
+
+            document.getElementById('total').textContent =
+                `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        /* =========================
+        FINALIZAR PEDIDO
+        ========================= */
+        function doOrder() {
+
+            const carrinho = getCarrinho();
+
+            if (carrinho.length === 0) {
+                alert('Seu carrinho está vazio!');
+                return;
+            }
+
+            alert('Pedido realizado com sucesso! 🍕');
+
+            localStorage.removeItem('carrinho');
+
+            carregarCarrinho();
+        }
+
+        /* =========================
+        CANCELAR PEDIDO
+        ========================= */
+        function cancelOrder() {
+
+            if (!confirm('Deseja cancelar o pedido?')) return;
+
+            localStorage.removeItem('carrinho');
+
+            carregarCarrinho();
         }
 
         function closeCart() {
-            // Add logic to close the cart modal/page
             window.history.back();
         }
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                atualizarContadorCarrinho();
+            }
+        });
     </script>
 </body>
 </html>

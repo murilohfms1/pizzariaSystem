@@ -57,7 +57,7 @@
                     </p>
                     <div class="hero-buttons">
                         <button class="btn btn-primary" onclick="window.location.href='menu'">Ver Cardápio →</button>
-                        <button class="btn btn-secondary" onclick="window.location.href='order'">Fazer Pedido</button>
+                        <button class="btn btn-secondary" onclick="window.location.href='cart'">Fazer Pedido</button>
                     </div>
                 </div>
 
@@ -279,5 +279,10 @@
             </div>
         </div>
     </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            atualizarContadorCarrinho();
+        });
+    </script>
 </body>
 </html>

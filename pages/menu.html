@@ -30,7 +30,7 @@
                     <a href="#contato">Contato</a>
                 </nav>
 
-                <div class="cart-btn" onclick="window.location.href='login'">
+                <div class="cart-btn" onclick="window.location.href='cart'">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="9" cy="21" r="1"></circle>
                         <circle cx="20" cy="21" r="1"></circle>
@@ -84,7 +84,7 @@
                         </div>
                         <div class="pizza-footer">
                             <span class="price">R$ 35,90</span>
-                            <button class="add-btn" onclick="addToCart('Margherita', 35.90)">
+                            <button class="add-btn" data-id="1" data-name="Margherita" data-price="35.90" onclick="addToCart(1,'Margherita', 35.90)">
                                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="9" cy="21" r="1"></circle>
                                     <circle cx="20" cy="21" r="1"></circle>
@@ -116,7 +116,7 @@
                         </div>
                         <div class="pizza-footer">
                             <span class="price">R$ 42,90</span>
-                            <button class="add-btn" onclick="addToCart('Pepperoni', 42.90)">
+                            <button class="add-btn" data-id="2" data-name="Pepperoni" data-price="42.90" onclick="addToCart(2, 'Pepperoni', 42.90)">
                                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="9" cy="21" r="1"></circle>
                                     <circle cx="20" cy="21" r="1"></circle>
@@ -148,7 +148,7 @@
                         </div>
                         <div class="pizza-footer">
                             <span class="price">R$ 38,90</span>
-                            <button class="add-btn" onclick="addToCart('Calabresa', 38.90)">
+                            <button class="add-btn" data-id="3" data-name="Calabresa" data-price="38.90" onclick="addToCart(3, 'Calabresa', 38.90)">
                                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="9" cy="21" r="1"></circle>
                                     <circle cx="20" cy="21" r="1"></circle>
@@ -181,7 +181,7 @@
                         </div>
                         <div class="pizza-footer">
                             <span class="price">R$ 45,90</span>
-                            <button class="add-btn" onclick="addToCart('Quatro Queijos', 45.90)">
+                            <button class="add-btn" data-id="4" data-name="Quatro Queijos" data-price="45.90" onclick="addToCart(4, 'Quatro Queijos', 45.90)">
                                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="9" cy="21" r="1"></circle>
                                     <circle cx="20" cy="21" r="1"></circle>
@@ -213,7 +213,7 @@
                         </div>
                         <div class="pizza-footer">
                             <span class="price">R$ 40,90</span>
-                            <button class="add-btn" onclick="addToCart('Portuguesa', 40.90)">
+                            <button class="add-btn" data-id="5" data-name="Portuguesa" data-price="40.90" onclick="addToCart(5, 'Portuguesa', 40.90)">
                                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="9" cy="21" r="1"></circle>
                                     <circle cx="20" cy="21" r="1"></circle>
@@ -245,7 +245,7 @@
                         </div>
                         <div class="pizza-footer">
                             <span class="price">R$ 43,90</span>
-                            <button class="add-btn" onclick="addToCart('Frango com Catupiry', 43.90)">
+                            <button class="add-btn" data-id="6" data-name="Frango com Catupiry" data-price="43.90" onclick="addToCart(6, 'Frango com Catupiry', 43.90)">
                                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="9" cy="21" r="1"></circle>
                                     <circle cx="20" cy="21" r="1"></circle>
@@ -278,7 +278,7 @@
                         </div>
                         <div class="pizza-footer">
                             <span class="price">R$ 44,90</span>
-                            <button class="add-btn" onclick="addToCart('Bacon', 44.90)">
+                            <button class="add-btn" data-id="7" data-name="Bacon" data-price="44.90" onclick="addToCart(7, 'Bacon', 44.90)">
                                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="9" cy="21" r="1"></circle>
                                     <circle cx="20" cy="21" r="1"></circle>
@@ -310,7 +310,7 @@
                         </div>
                         <div class="pizza-footer">
                             <span class="price">R$ 39,90</span>
-                            <button class="add-btn" onclick="addToCart('Vegetariana', 39.90)">
+                            <button class="add-btn" data-id="8" data-name="Vegetariana" data-price="39.90" onclick="addToCart(8, 'Vegetariana', 39.90)">
                                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="9" cy="21" r="1"></circle>
                                     <circle cx="20" cy="21" r="1"></circle>
@@ -360,34 +360,83 @@
     </footer>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            atualizarContadorCarrinho();
+        });
+
+        function getCarrinho() {
+            return JSON.parse(localStorage.getItem('carrinho')) || [];
+        }
+
+        function salvarCarrinho(carrinho) {
+            localStorage.setItem('carrinho', JSON.stringify(carrinho));
+        }
+
+        /* =========================
+        FILTRO DE CATEGORIA
+        ========================= */
         function filterCategory(category) {
+
             const cards = document.querySelectorAll('.pizza-card');
             const tabs = document.querySelectorAll('.tab-btn');
-            
-            // Update active tab
+
             tabs.forEach(tab => tab.classList.remove('active'));
             event.target.classList.add('active');
-            
-            // Filter cards
+
             cards.forEach(card => {
-                if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+                card.style.display =
+                    (category === 'all' || card.dataset.category === category)
+                    ? 'block'
+                    : 'none';
             });
         }
 
-        function addToCart(name, price) {
-            // Get current cart count
-            let count = parseInt(document.querySelector('.cart-badge').textContent);
-            count++;
-            document.querySelector('.cart-badge').textContent = count;
-            
-            // Show feedback
+        /* =========================
+        ADICIONAR AO CARRINHO
+        ========================= */
+        function addToCart(id, name, price) {
+
+            id = Number(id);
+
+            let carrinho = getCarrinho();
+
+            const item = carrinho.find(p => Number(p.id) === id);
+
+            if (item) {
+                item.quantidade += 1;
+            } else {
+                carrinho.push({
+                    id: id,
+                    nome: name,
+                    preco: Number(price),
+                    quantidade: 1
+                });
+            }
+
+            salvarCarrinho(carrinho);
+
+            atualizarContadorCarrinho();
+
             alert(`${name} adicionada ao carrinho!`);
-            
-            // Here you would normally save to localStorage or send to backend
+        }
+
+        /* =========================
+        CONTADOR DO CARRINHO
+        ========================= */
+        function atualizarContadorCarrinho() {
+
+            const carrinho = getCarrinho();
+
+            const total = carrinho.reduce(
+                (soma, item) => soma + item.quantidade,
+                0
+            );
+
+            const badge = document.querySelector('.cart-badge');
+
+            if (badge) {
+                badge.textContent = total;
+            }
         }
     </script>
 </body>
