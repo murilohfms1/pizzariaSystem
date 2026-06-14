@@ -10,3 +10,5 @@ async def log():
 @login_router.get("/pwdreset", tags=["reset"])
 async def reset():
     return FileResponse("pages/pwdreset.html", media_type="text/html")
+
+@login_router.post():

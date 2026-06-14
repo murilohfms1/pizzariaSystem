@@ -1,11 +1,20 @@
 from core.database import Base
 from core.database import db
 
+from sqlalchemy import Column, String, Integer, Boolean
+from sqlalchemy.orm import relationship
+
 
 class User(Base):
     __tablename__ = 'users'
-    id = db.column(db.integer, primary_key=True)
-    name = db.column(db.string(50), nullable=False)
-    tel = db.column(db.string(20), nullable=False)
-    email = db.column(db.string(120), nullable=False, unique=True)
-    pwd_hash = db.column(db.string(255), nullable=False)
+
+    id = Column(Integer, primary_key=True)
+
+    name = Column(String, nullable=False)
+    email = Column(String, nullable=False, unique=True)
+    
+    pwd_hash = Column(String, nullable=False)
+    admin = Column(Boolean, default=False)
+    active = Column(Boolean)
+
+    orders = relationship("Order", back_populates="user")

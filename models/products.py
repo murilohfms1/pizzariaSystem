@@ -1,9 +1,16 @@
 from core.database import Base
 from core.database import db
 
+from sqlalchemy import Column, String, Integer, Numeric
+from sqlalchemy.orm import relationship
+
 
 class Product(Base):
     __tablename__ = 'products'
-    id = db.column(db.integer, primary_key=True)
-    name = db.column(db.string(50), primary_key=True)
-    price = db.column(db.integer(50), nullable=False)
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False, unique=True)
+
+    price = Column(Numeric(10, 2), nullable=False)
+
+    items = relationship("OrderItem", back_populates="product")
