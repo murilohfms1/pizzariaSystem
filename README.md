@@ -4,6 +4,7 @@
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python)
 ![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-F7DF1E?style=for-the-badge&logo=javascript)
 ![Status](https://img.shields.io/badge/Status-Completed-brightgreen?style=for-the-badge)
+![SQLAlchemy](https://img.shields.io/badge/GitHub-SQLAlchemy-181717?style=for-the-badge&logo=github)
 
 ---
 
